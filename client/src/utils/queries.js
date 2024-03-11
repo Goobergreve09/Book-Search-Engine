@@ -19,3 +19,22 @@ export const GET_ME = gql`
     }
   }
 `;
+
+export const REMOVE_BOOK = gql`
+  mutation RemoveBook($bookId: ID!) {
+    removeBook(bookId: $bookId) {
+      _id      // Include any fields you need in the response
+      username
+      email
+      savedBooks {
+        _id
+        bookId
+        title
+        authors
+        description
+        image
+        link
+      }
+    }
+  }
+`;
