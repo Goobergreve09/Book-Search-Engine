@@ -14,7 +14,7 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    cache:"bounded",
+    cache: "bounded",
     context: ({ req }) => {
       // Pass the request object to the context to access it in resolvers
       return { req };

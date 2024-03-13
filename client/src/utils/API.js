@@ -1,10 +1,26 @@
-// route to get logged in user's info (needs the token)
-export const getMe = (token) => {
+import { AuthService } from './auth';
+
+export const getMe = () => {
+  const token = AuthService.getToken();
+  if (!token) {
+    return Promise.reject(new Error('No token available'));
+  }
+  
   return fetch('/api/users/me', {
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to fetch user information');
+    }
+    return response.json();
+  })
+  .catch(error => {
+    console.error('Error fetching user information:', error);
+    throw error;
   });
 };
 
@@ -13,6 +29,7 @@ export const createUser = (userData) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AuthService.getToken()}`, // Include token here
     },
     body: JSON.stringify(userData),
   });
@@ -23,35 +40,47 @@ export const loginUser = (userData) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AuthService.getToken()}`, // Include token here
     },
     body: JSON.stringify(userData),
   });
 };
 
-// save book data for a logged in user
-export const saveBook = (bookData, token) => {
+export const saveBook = (bookData) => {
+  const token = AuthService.getToken();
+  if (!token) {
+    return Promise.reject(new Error('No token available'));
+  }
+  
   return fetch('/api/users', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
     body: JSON.stringify(bookData),
   });
 };
 
-// remove saved book data for a logged in user
-export const deleteBook = (bookId, token) => {
+export const deleteBook = (bookId) => {
+  const token = AuthService.getToken();
+  if (!token) {
+    return Promise.reject(new Error('No token available'));
+  }
+  
   return fetch(`/api/users/books/${bookId}`, {
     method: 'DELETE',
     headers: {
-      authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
   });
 };
 
-// make a search to google books api
-// https://www.googleapis.com/books/v1/volumes?q=harry+potter
 export const searchGoogleBooks = (query) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`, {
+    headers: {
+      'Authorization': `Bearer ${AuthService.getToken()}`, // Include token here
+    },
+  });
 };
+
