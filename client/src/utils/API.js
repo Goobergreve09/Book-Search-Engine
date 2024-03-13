@@ -1,9 +1,13 @@
+import AuthService from './auth'
+
 // route to get logged in user's info (needs the token)
-export const getMe = (token) => {
+export const getMe = () => {
+  const token = AuthService.getToken();
+  console.log('Using token:', token); // Add this line
   return fetch('/api/users/me', {
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      'authorization': `Bearer ${token}`,
     },
   });
 };
@@ -29,27 +33,30 @@ export const loginUser = (userData) => {
 };
 
 // save book data for a logged in user
-export const saveBook = (bookData, token) => {
+export const saveBook = (bookData) => {
+  const token = AuthService.getToken();
+  console.log('Using token:', token); // Add this line
   return fetch('/api/users', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      'authorization': `Bearer ${token}`,
     },
     body: JSON.stringify(bookData),
   });
 };
 
 // remove saved book data for a logged in user
-export const deleteBook = (bookId, token) => {
+export const deleteBook = (bookId) => {
+  const token = AuthService.getToken();
+  console.log('Using token:', token); // Add this line
   return fetch(`/api/users/books/${bookId}`, {
     method: 'DELETE',
     headers: {
-      authorization: `Bearer ${token}`,
+      'authorization': `Bearer ${token}`,
     },
   });
 };
-
 // make a search to google books api
 // https://www.googleapis.com/books/v1/volumes?q=harry+potter
 export const searchGoogleBooks = (query) => {
