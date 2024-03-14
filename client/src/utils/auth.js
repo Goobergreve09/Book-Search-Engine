@@ -17,8 +17,13 @@ class AuthService {
 
   isTokenExpired(token) {
     const decoded = decode(token);
-    if (decoded.exp < Date.now() / 1000) {
+    const isExpired = decoded.exp < Date.now() / 1000;
+  
+    if (isExpired) {
+      // Remove the expired token from localStorage
       localStorage.removeItem('id_token');
+      // Redirect the user to the login page
+      window.location.assign('/login');
       return true;
     }
     return false;
