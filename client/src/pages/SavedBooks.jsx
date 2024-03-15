@@ -1,8 +1,10 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_ME, REMOVE_BOOK } from '../utils/queries';
+import { GET_ME} from '../utils/queries';
+import {REMOVE_BOOK} from '../utils/mutations'
 import { removeBookId } from '../utils/localStorage';
 import Auth from '../utils/auth';
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
+
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
