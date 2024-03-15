@@ -1,57 +1,50 @@
-const express = require("express");
-const path = require("path");
-const { ApolloServer } = require("apollo-server-express");
-const db = require("./config/connection");
-const typeDefs = require("../server/schemas/typedefs");
-const resolvers = require("../server/schemas/resolvers");
-const { authMiddleware } = require("./utils/auth");
+const express = require('express');
+const path = require('path');
+// Import the ApolloServer class
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@apollo/server/express4');
+const { authMiddleware } = require('./utils/auth');
+
+// Import the two parts of a GraphQL schema
+const { typeDefs, resolvers } = require('./schemas');
+const db = require('./config/connection');
+
+const PORT = process.env.PORT || 3001;
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-async function startApolloServer() {
-  // Create an instance of ApolloServer with type definitions and resolvers
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: authMiddleware // Apply authMiddleware to ApolloServer context
-  });
-  
-  // Apply ApolloServer instance as middleware to Express
+// Create a new instance of an Apollo server with the GraphQL schema
+const startApolloServer = async () => {
   await server.start();
-  server.applyMiddleware({ app });
-
-  // Middleware to parse incoming requests
-  app.use(express.urlencoded({ extended: true }));
+  
+  app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
+  
+  app.use('/graphql', expressMiddleware(server, {
+    context: authMiddleware
+  }));
 
-  // Serve static files in production
-  if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../client/build")));
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
   }
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  db.once('open', () => {
+    app.listen(PORT, () => {
+      console.log(`API server running on port ${PORT}!`);
+      console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    });
   });
+};
 
-  // Error handling middleware
-  app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send("Something broke!");
-  });
-
-  // Log server start
-  await db.once("open", () => {
-    console.log("Connected to the database");
-  });
-
-  app.listen(PORT, () => {
-    console.log(
-      `🌍 Server listening on http://localhost:${PORT}${server.graphqlPath}`
-    );
-  });
-}
-
-// Start Apollo Server and Express
+// Call the async function to start the server
 startApolloServer();
+
 
