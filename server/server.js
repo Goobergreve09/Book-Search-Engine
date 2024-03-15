@@ -14,14 +14,9 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    cache: "bounded",
-    context: ({ req }) => {
-      // Pass only necessary information from the request to the context
-      const token = req.headers.authorization || "";
-      return { token };
-    },
+    context: authMiddleware // Apply authMiddleware to ApolloServer context
   });
-
+  
   // Apply ApolloServer instance as middleware to Express
   await server.start();
   server.applyMiddleware({ app });
@@ -35,8 +30,9 @@ async function startApolloServer() {
     app.use(express.static(path.join(__dirname, "../client/build")));
   }
 
-  // Auth middleware should be applied after Apollo middleware
-  app.use(authMiddleware);
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
 
   // Error handling middleware
   app.use((err, req, res, next) => {
@@ -58,3 +54,4 @@ async function startApolloServer() {
 
 // Start Apollo Server and Express
 startApolloServer();
+
