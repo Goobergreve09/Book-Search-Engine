@@ -4,6 +4,7 @@ const path = require('path');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { authMiddleware } = require('./utils/auth');
+import sfg from "../client/dist"
 
 
 // Import the two parts of a GraphQL schema
@@ -29,12 +30,13 @@ const startApolloServer = async () => {
     context: authMiddleware
   }));
 
-  app.use(express.static(path.join(__dirname, 'client/dist')));
-
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(process.cwd(),'client','dist','index.html'));
-    });
-  }
+  if (process.env.NODE_ENV) {
+    //static folder add
+     app.use(express.static("../client/dist"));
+     app.get("*", function (req, res) {
+     res.sendFile(path.resolve(__dirname , "../client/dist", "index.html"));
+      });
+    }
 
   db.once('open', () => {
     app.listen(PORT, () => {
@@ -42,6 +44,7 @@ const startApolloServer = async () => {
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
     });
   });
+};
 
 
 // Call the async function to start the server
