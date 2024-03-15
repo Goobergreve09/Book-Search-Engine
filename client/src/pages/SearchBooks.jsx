@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client'; // Import useMutation
 import {
   Container,
   Col,
@@ -15,18 +15,12 @@ import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
-  // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
-  // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
-
-  // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
+  
+  const [saveBookMutation] = useMutation(SAVE_BOOK); // Use useMutation hook for SAVE_BOOK mutation
 
-  // Use the useMutation hook for SAVE_BOOK mutation
-  const [saveBookMutation] = useMutation(SAVE_BOOK);
-
-  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   }, [savedBookIds]);
@@ -76,7 +70,7 @@ const SearchBooks = () => {
         variables: { bookData: bookToSave }
       });
 
-      setSavedBookIds([...savedBookIds, data.saveBook._id]);
+      setSavedBookIds([...savedBookIds, data.saveBook._id]); // Update saved book IDs state
     } catch (err) {
       console.error(err);
     }
@@ -120,9 +114,7 @@ const SearchBooks = () => {
             return (
               <Col md="4" key={book.bookId}>
                 <Card border='dark'>
-                  {book.image ? (
-                    <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
-                  ) : null}
+                  {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
                   <Card.Body>
                     <Card.Title>{book.title}</Card.Title>
                     <p className='small'>Authors: {book.authors}</p>
@@ -149,5 +141,8 @@ const SearchBooks = () => {
 };
 
 export default SearchBooks;
+
+ 
+
 
 
