@@ -1,3 +1,5 @@
+import './App.css';
+import { Outlet } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -5,11 +7,10 @@ import {
   createHttpLink,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import './App.css';
-import { Outlet } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 
+// Construct our main GraphQL API endpoint
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
@@ -26,6 +27,7 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
+
 const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
   link: authLink.concat(httpLink),
@@ -34,7 +36,7 @@ const client = new ApolloClient({
 
 function App() {
   return (
-     <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
       <Navbar />
       <Outlet />
     </ApolloProvider>
@@ -42,4 +44,5 @@ function App() {
 }
 
 export default App;
+
 
