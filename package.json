@@ -9,7 +9,7 @@
     "install": "cd server && npm i && cd ../client && npm i",
     "build-client": "cd client && npm run build",
     "build": "npm run build-client",
-    "render-build": "npm install && npm run build"
+   "render-build": "./custom-build.sh"
   },
   "keywords": [],
   "author": "",
