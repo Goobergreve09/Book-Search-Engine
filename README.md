@@ -10,9 +10,10 @@ This project is a Google Books search engine application that allows users to se
 
 1. [Description](#description)
 2. [Features](#features)
-3. [How to Use](#usage)
-4. [Licensing](#license)
-5. [Contact Me](#questions)
+3. [Deployment](#deployment)
+4. [How to Use](#usage)
+5. [Licensing](#license)
+6. [Contact Me](#questions)
 
 ## Features
 
@@ -23,6 +24,12 @@ This project is a Google Books search engine application that allows users to se
 - Users can save their favorite books to their profile for later reference.
 
 - Authentication is implemented to allow users to sign up, log in, and log out securely.
+
+## Deployment
+
+To view the deployed application on Render, visit the link below:
+
+--> [Click me to view application](https://book-search-engine-60tt.onrender.com/)
 
 ## Usage
 
